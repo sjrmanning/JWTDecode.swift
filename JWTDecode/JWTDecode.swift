@@ -80,9 +80,16 @@ public struct Claim {
         // So, to find out if the deserialized claim value is really a CFBoolean or not, we need to bypass its NSNumber
         // wrapper and check its Core Foundation type directly. We do so by comparing its Core Foundation type ID to
         // that of CFBoolean.
+
+#if os(Linux)
+        if let value = self.value as? Bool {
+            return value
+        }
+#else
         if let value = self.value as CFTypeRef?, CFGetTypeID(value) == CFBooleanGetTypeID() {
             return self.value as? Bool
         }
+#endif
         return nil
     }
 
